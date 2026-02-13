@@ -1,6 +1,6 @@
 import React from "react";
 
-const ProductCard = ({product})=>{
+const ProductCard = ({product,addtocart})=>{
    
     return (
         <>
@@ -11,7 +11,8 @@ const ProductCard = ({product})=>{
         <div className="p-4">
             <h2 className="p-5 flex flex-col h-full">{product.title}</h2>
             <p className="text-lg font-bold text-gray-900">{product.price}</p>
-            <button className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-xl
+
+            <button onClick={()=> addtocart(product)} className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-xl
                      hover:bg-indigo-700 transition font-medium">Add to cart</button>
             </div>
         </div>

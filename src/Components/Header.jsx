@@ -1,4 +1,4 @@
- const Header =({search,setSearch})=>{
+ const Header =({search,setSearch,CartCount})=>{
 
     return(
         <>
@@ -9,6 +9,15 @@
                 <input type="text" value={search} onChange={(e)=>setSearch(e.target.value)} placeholder="search products.." className="border border-gray-300 rounded-xl px-4 py-2 w-full sm:w-72
                      focus:ring-2 focus:ring-indigo-500 focus:outline-none
                      transition"/>
+
+            <div className="relative">
+            🛒
+            <span className="absolute -top-2 -right-3 bg-indigo-600 text-white text-xs rounded-full px-2">
+              {CartCount}
+            </span>
+            </div>         
+
+            
             </div>
 
         </header>
