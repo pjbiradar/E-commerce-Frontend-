@@ -1,4 +1,14 @@
- const Header =({search,setSearch,CartCount})=>{
+import { useSelector } from "react-redux";
+
+ const Header =({search,setSearch})=>{
+// Read cart items from Redux store
+    const cartItems = useSelector((state)=>state.cart.items)
+    // console.log(cartItems);
+
+    const cartCount = cartItems.reduce(
+        (total, item) => total + item.quantity,
+        0
+      );
 
     return(
         <>
@@ -13,7 +23,7 @@
             <div className="relative">
             🛒
             <span className="absolute -top-2 -right-3 bg-indigo-600 text-white text-xs rounded-full px-2">
-              {CartCount}
+              {cartCount}
             </span>
             </div>         
 
@@ -26,3 +36,8 @@
 
 }
 export default Header;
+
+
+
+
+
