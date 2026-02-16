@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
  const Header =({search,setSearch})=>{
 // Read cart items from Redux store
@@ -20,12 +21,14 @@ import { useSelector } from "react-redux";
                      focus:ring-2 focus:ring-indigo-500 focus:outline-none
                      transition"/>
 
+            <Link to="/cart" className="relative">
             <div className="relative">
             🛒
             <span className="absolute -top-2 -right-3 bg-indigo-600 text-white text-xs rounded-full px-2">
               {cartCount}
             </span>
-            </div>         
+            </div>    
+            </Link>  
 
             
             </div>
