@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux"
 import {removeTheItemfromCart,IncreaseTheITemQty,DecreaseTheItemQty} from "../cart/CartSlice"
 import { Link, useNavigate } from "react-router-dom";
+import { useMemo } from "react";
 
 
 const CartPage =()=>{
@@ -9,9 +10,13 @@ const CartPage =()=>{
     const Items = useSelector((state) => state.cart.items)
     const navigate = useNavigate();
 
-    const totalPrice = Items.reduce((total,curItem)=>
+    const totalPrice = useMemo(()=>{
+      return Items.reduce((total,curItem)=>
     total+curItem.price * curItem.quantity,0
     )
+
+    },[Items])
+    
 
 
   if (Items.length === 0) {

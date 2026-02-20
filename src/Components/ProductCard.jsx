@@ -1,6 +1,8 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../cart/CartSlice";
+import { memo } from "react";
+
 
 const ProductCard = ({product})=>{
     const dispatch = useDispatch();
@@ -26,4 +28,4 @@ const ProductCard = ({product})=>{
 
 }
 
-export default ProductCard;
+export default memo(ProductCard);

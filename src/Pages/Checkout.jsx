@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom";
 import { clearCart } from "../cart/CartSlice";
 
-export const Checkout = ()=>{
+ const Checkout = ()=>{
     const dispatch = useDispatch();
     const cartItems = useSelector((state)=>state.cart.items);
     const navigate = useNavigate();
@@ -57,3 +57,6 @@ export const Checkout = ()=>{
   </div>
 );
 }
+
+
+export default Checkout;
