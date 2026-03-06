@@ -19,7 +19,8 @@ import { Link } from "react-router-dom";
                 <a href="/" className="text-2xl font-bold tracking-tight text-indigo-600"> Nessesity </a>
                   
                 </h1>
-                <Link to="/" className="relative">Home</Link>
+                {/* <Link to="/" className="relative">Home</Link> */}
+                <a href="/" className="relative">Home</a>
 
 
                 <input type="text" value={search} onChange={(e)=>setSearch(e.target.value)} placeholder="search products.." className="border border-gray-300 rounded-xl px-4 py-2 w-full sm:w-72

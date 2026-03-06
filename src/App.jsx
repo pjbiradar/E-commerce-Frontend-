@@ -16,7 +16,7 @@ function App() {
   const Checkout =lazy(()=>import ("./Pages/Checkout"))
   //lifting state up
   const[search,setSearch]  = useState("");
-  const[isLoggedin, setIsLoggedin] = useState(false);
+  const[isLoggedin, setIsLoggedin] = useState(true);
 
   return (
     <>
