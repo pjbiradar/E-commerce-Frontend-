@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // import CartPage from './Pages/CartPage';
 // import { Checkout } from './Pages/Checkout';
 import ProtectedRoute from './Components/ProtectedRoute.jsx';
+import ProductDetails from './Pages/ProductDetails';
 
 
 
@@ -27,6 +28,7 @@ function App() {
     <Routes>
       <Route path='/' element={<Products search={search} />}/>
       <Route path='/cart' element={<Cart/>}/>
+      <Route path='/products/:id' element={<ProductDetails/>}/>
 
       <Route path='/checkout' element={
         <ProtectedRoute isLoggedin={isLoggedin}>

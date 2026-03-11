@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../cart/CartSlice";
 import { memo } from "react";
+import { Link } from "react-router-dom";
 
 
 const ProductCard = ({product})=>{
@@ -9,6 +10,9 @@ const ProductCard = ({product})=>{
    
     return (
         <>
+        <Link to={`/products/${product.id}`}>
+  <div className="border p-4 rounded hover:shadow cursor-pointer">
+
         <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300">
             <img src={product.thumbnail} alt={product.title} className="w-full h-52 object-contain p-6 group-hover:scale-105 transition-transform duration-300"/>
         
@@ -21,6 +25,9 @@ const ProductCard = ({product})=>{
                      hover:bg-indigo-700 transition font-medium">Add to cart</button>
             </div>
         </div>
+
+        </div>
+</Link>
 
 
         </>
