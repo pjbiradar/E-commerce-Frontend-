@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
+import { useDispatch } from "react-redux";
+import { addToCart } from "../cart/CartSlice";
 
 
 const ProductDetails =()=>{
@@ -10,6 +12,13 @@ const ProductDetails =()=>{
     const[product,setProduct] = useState({})
     const[loader,setLoader] = useState(true)
     const[error,setError] = useState(null)
+
+    const dispatch = useDispatch()
+
+    const handleAddtoCart =()=>{
+        dispatch(addToCart(product))
+    }
+
 
 
     useEffect(()=>{
@@ -94,8 +103,19 @@ const ProductDetails =()=>{
             <p className="text-sm text-gray-500 mb-4">
               Rating: {product.rating}
             </p>
+
+            <p className="text-sm text-gray-500 mb-1">
+                Brand: {product.brand}
+            </p>
+            <p className="text-sm text-gray-500 mb-1">
+                  Category: {product.category}
+            </p>
+            <p className="text-sm text-gray-500 mb-4">
+                Stock: {product.stock > 0 ? "In stock" : "Out of stock"}
+            </p>
       
-            <button className="px-6 py-2 bg-black text-white rounded">
+            <button className="px-6 py-2 bg-black text-white rounded disabled:opacity-50" onClick={handleAddtoCart} 
+            disabled={product.stock === 0}>
               Add to Cart
             </button>
           </div>
