@@ -71,32 +71,31 @@ const ProductDetails =()=>{
 
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6">
         <button
           onClick={() => navigate(-1)}
-          className="mb-4 text-blue-500"
+          className="mb-6 text-sm sm:text-base text-blue-500"
         >
           Back
         </button>
       
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <img
-            src={product.thumbnail}
-            alt={product.title}
-            className="w-full rounded"
-          />
+        <img src={product.thumbnail} alt={product.title} className="w-full max-h-[350px] object-contain rounded"/>
       
           {/* Make this column flex and center vertically */}
           <div className="flex flex-col justify-center">
-            <h1 className="text-2xl font-bold mb-2">
+           
+            <h1 className="text-xl sm:text-2xl font-bold mb-2">
               {product.title}
             </h1>
       
-            <p className="text-gray-600 mb-4">
+           
+            <p className="text-sm sm:text-base text-gray-600 mb-4">
               {product.description}
             </p>
       
-            <p className="text-xl font-semibold mb-2">
+           
+            <p className="text-lg sm:text-xl font-semibold mb-2">
               ₹{product.price}
             </p>
       
@@ -114,7 +113,7 @@ const ProductDetails =()=>{
                 Stock: {product.stock > 0 ? "In stock" : "Out of stock"}
             </p>
       
-            <button className="px-6 py-2 bg-black text-white rounded disabled:opacity-50" onClick={handleAddtoCart} 
+            <button className="w-full sm:w-auto px-6 py-2 bg-black text-white rounded disabled:opacity-50" onClick={handleAddtoCart} 
             disabled={product.stock === 0}>
               Add to Cart
             </button>

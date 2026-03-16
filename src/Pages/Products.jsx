@@ -10,7 +10,7 @@ const Products = ({ search }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
-  const LIMIT = 9;
+  const LIMIT = 8;
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
   // Debounce search input
@@ -72,20 +72,20 @@ const Products = ({ search }) => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6">
       <h2 className="text-2xl font-bold mb-6">Products</h2>
 
       {products.length === 0 ? (
         <p className="text-center text-gray-500">No products found</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}
 
-      <div className="flex justify-center gap-4 mt-8">
+      <div className="flex justify-center items-center gap-4 mt-8 px-2 flex-wrap">
         <button
           onClick={() => setPage((p) => p - 1)}
           disabled={page === 1 || loading}

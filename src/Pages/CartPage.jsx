@@ -28,18 +28,19 @@ const CartPage =()=>{
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-6">
     <h2 className="text-2xl font-bold mb-6">Your Cart</h2>
 
     {Items.map((item) => (
       <div
         key={item.id}
-        className="flex items-center justify-between border-b py-4"
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b py-4 gap-4"
       >
+        
         <div className="flex items-center gap-4">
           <img
             src={item.thumbnail}
-            className="w-20 h-20 object-contain"
+            className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
           />
           <div>
             <h3 className="font-medium">{item.title}</h3>
@@ -47,7 +48,7 @@ const CartPage =()=>{
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <button
             onClick={() => dispatch(DecreaseTheItemQty(item.id))}
             className="px-3 py-1 bg-gray-200 rounded"
@@ -86,7 +87,7 @@ const CartPage =()=>{
     <div>
     <button 
             onClick={() => navigate("/checkout")} 
-            className="px-4 py-2 bg-blue-500 text-white rounded">
+            className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded">
            Checkout
            </button>
     </div>

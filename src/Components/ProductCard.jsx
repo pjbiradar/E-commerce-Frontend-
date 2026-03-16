@@ -10,27 +10,25 @@ const ProductCard = ({product})=>{
    
     return (
         <>
+     
+
+
+        <div className="group border rounded-xl bg-white hover:shadow-lg transition cursor-pointer">
         <Link to={`/products/${product.id}`}>
-  <div className="border p-4 rounded hover:shadow cursor-pointer">
-
-        <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300">
-            <img src={product.thumbnail} alt={product.title} className="w-full h-52 object-contain p-6 group-hover:scale-105 transition-transform duration-300"/>
-        
-
+            <img src={product.thumbnail} alt={product.title} className="w-full h-40 sm:h-48 object-contain p-4 group-hover:scale-105 transition-transform"/>
+            </Link>
         <div className="p-4">
-            <h2 className="p-5 flex flex-col h-full">{product.title}</h2>
-            <p className="text-lg font-bold text-gray-900">{product.price}</p>
-
+           
+            <h2 className="text-sm sm:text-base font-medium line-clamp-2">{product.title}</h2>
+            <p className="text-base sm:text-lg font-bold text-gray-900">₹{product.price}</p>
             <button onClick={()=> dispatch(addToCart(product))} className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-xl
                      hover:bg-indigo-700 transition font-medium">Add to cart</button>
             </div>
         </div>
-
-        </div>
-</Link>
+       
 
 
-        </>
+    </>
     )
 
 }
