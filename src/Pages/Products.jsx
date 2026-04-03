@@ -1,112 +1,185 @@
-// // Api integration
-// // Search handled via API
-// // Loading + error UI state
+import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchProducts,
+  resetProducts,
+  setPage,
+  nextPage,
+} from "../Product/ProductSlice";
+import ProductCard from "../Components/ProductCard";
 
-import { useEffect, useState } from 'react'
-import ProductCard from '../Components/ProductCard'
+const LIMIT = 8;
 
-const Products = ({ search }) => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const LIMIT = 8;
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+// matches exactly what Tailwind's md: breakpoint uses
+// window.innerWidth can lie — matchMedia is what the browser
+// actually uses to evaluate CSS breakpoints
+const isMobile = () => !window.matchMedia("(min-width: 768px)").matches;
 
-  // Debounce search input
+const Products = ({ search = "" }) => {
+  const dispatch = useDispatch();
+  const { items, loading, error, page, hasMore } = useSelector(
+    (state) => state.products
+  );
+
+  const isFetchingRef = useRef(false);
+  const observerRef = useRef(null);
+  const hasMoreRef = useRef(hasMore);
+  const loadingRef = useRef(loading);
+
+  hasMoreRef.current = hasMore;
+  loadingRef.current = loading;
+
+  /* -------- INITIAL LOAD / SEARCH CHANGE -------- */
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [search]);
+    isFetchingRef.current = false;
+    dispatch(resetProducts());
+    dispatch(
+      fetchProducts({ search, page: 1, limit: LIMIT, mode: "replace" })
+    );
+  }, [search, dispatch]);
 
-  // Reset page when search changes
+  /* -------- MOBILE: fetch when page increments -------- */
   useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch]);
+  
+    if (page === 1) return;
+    if (!isMobile()) return; //uses matchMedia, not innerWidth
+    if (!hasMore) return;
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+    console.log("mobile fetch firing for page", page); // you'll see this only on real mobile width now
 
-        const skip = (page - 1) * LIMIT;
-        const url = debouncedSearch
-          ? `https://dummyjson.com/products/search?q=${debouncedSearch}&limit=${LIMIT}&skip=${skip}`
-          : `https://dummyjson.com/products?limit=${LIMIT}&skip=${skip}`;
+    dispatch(
+      fetchProducts({ search, page, limit: LIMIT, mode: "append" })
+    ).then(() => {
+      isFetchingRef.current = false;
+    });
+  }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
 
-        const res = await fetch(url, { signal: controller.signal });
+useEffect(() => {
+  let observer = null;
 
-        if (!res.ok) {
-          if (res.status === 429) {
-            throw new Error("Too many requests. Please wait...");
-          }
-          throw new Error("Failed to fetch products");
-        }
+  const attachObserver = () => {
+    if (observer) return;
+    if (!observerRef.current) return;
 
-        const data = await res.json();
-        setProducts(data.products || []);
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          setError(err.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+    observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0].isIntersecting) return;
+        if (isFetchingRef.current) return;
+        if (!hasMoreRef.current) return;
+        if (loadingRef.current) return;
 
-    fetchProducts();
+        isFetchingRef.current = true;
+        dispatch(nextPage());
+      },
+      { threshold: 0.1 }
+    );
 
-    return () => controller.abort(); // cancel previous request
-  }, [debouncedSearch, page]);
+    observer.observe(observerRef.current);
+  };
 
-  if (loading) {
-    return <p className="text-center mt-10">Loading products...</p>;
+  const detachObserver = () => {
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+  };
+
+  const mediaQuery = window.matchMedia("(max-width: 767px)");
+
+  const handleMediaChange = (e) => {
+    if (e.matches) {
+      // switched to mobile — attach observer
+      attachObserver();
+    } else {
+      // switched to desktop — detach observer AND clean up
+      // mobile appended multiple pages into items, so we reset
+      // and re-fetch only page 1 in replace mode so desktop
+      // starts from a clean single-page state
+      detachObserver();
+      isFetchingRef.current = false;
+      dispatch(resetProducts());
+      dispatch(
+        fetchProducts({ search, page: 1, limit: LIMIT, mode: "replace" })
+      );
+    }
+  };
+
+  if (mediaQuery.matches) {
+    attachObserver();
   }
 
-  if (error) {
-    return <p className="text-center mt-10 text-red-500">{error}</p>;
-  }
+  mediaQuery.addEventListener("change", handleMediaChange);
+
+  return () => {
+    detachObserver();
+    mediaQuery.removeEventListener("change", handleMediaChange);
+  };
+}, [search]); // search in deps so if search changes the listener
+              //    is rebuilt with the latest search value
+  /* -------- DESKTOP: Prev / Next -------- */
+  const handlePrev = () => {
+    if (page <= 1 || loading) return;
+    const targetPage = page - 1;
+    dispatch(setPage(targetPage));
+    dispatch(
+      fetchProducts({ search, page: targetPage, limit: LIMIT, mode: "replace" })
+    );
+  };
+
+  const handleNext = () => {
+    if (!hasMore || loading) return;
+    const targetPage = page + 1;
+    dispatch(setPage(targetPage));
+    dispatch(
+      fetchProducts({ search, page: targetPage, limit: LIMIT, mode: "replace" })
+    );
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6">
       <h2 className="text-2xl font-bold mb-6">Products</h2>
 
-      {products.length === 0 ? (
-        <p className="text-center text-gray-500">No products found</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+      {error && (
+        <p className="text-center text-red-500 mt-6">{error}</p>
       )}
 
-      <div className="flex justify-center items-center gap-4 mt-8 px-2 flex-wrap">
+      {!loading && items.length === 0 && (
+        <p className="text-center text-gray-500">No products found</p>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {items.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+
+      {loading && (
+        <p className="text-center mt-6">Loading products...</p>
+      )}
+
+      {/* DESKTOP PAGINATION */}
+      <div className="hidden md:flex justify-center items-center gap-4 mt-8">
         <button
-          onClick={() => setPage((p) => p - 1)}
+          onClick={handlePrev}
           disabled={page === 1 || loading}
-          className="px-4 py-2 bg-gray-200 rounded"
+          className="px-4 py-2 border rounded disabled:opacity-50"
         >
           Prev
         </button>
-
-        <span className="px-4 py-2 font-semibold">Page {page}</span>
-
+        <span className="font-medium">Page {page}</span>
         <button
-          onClick={() => setPage((p) => p + 1)}
-          disabled={loading}
-          className="px-4 py-2 bg-gray-200 rounded"
+          onClick={handleNext}
+          disabled={!hasMore || loading}
+          className="px-4 py-2 border rounded disabled:opacity-50"
         >
           Next
         </button>
       </div>
+
+      {/* MOBILE SCROLL TRIGGER */}
+      <div ref={observerRef} className="h-1 md:hidden" />
     </div>
   );
 };
 
 export default Products;
-

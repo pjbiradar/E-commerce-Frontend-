@@ -1,5 +1,6 @@
 import {configureStore} from "@reduxjs/toolkit"
 import cartReducer from "../cart/CartSlice"
+import productReducer from '../Product/ProductSlice'
 
 
 //step 1 to create redux store
@@ -10,12 +11,10 @@ import cartReducer from "../cart/CartSlice"
 //Redux Toolkit gives us: // Centralized store (single source of truth) // Predictable updates using reducers
 // Optimized re-rendering // DevTools for debugging// Scales well as features grow
 
-
-
-
 export const store = configureStore({
     reducer: {
         cart: cartReducer,
+        products: productReducer
 
     },
 })
